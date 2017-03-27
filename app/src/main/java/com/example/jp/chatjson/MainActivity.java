@@ -121,6 +121,8 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
+        //si el id es igual al usuario mostramos un alert dialog
+
         if (id == R.id.usuario) {
             AlertDialog.Builder alert= new AlertDialog.Builder(this);
             final EditText user=new EditText(this);
@@ -154,7 +156,7 @@ public class MainActivity extends AppCompatActivity
 
         URI uri;
         try {
-            uri = new URI("ws://nodejs-json-pruebas--jpatricio.c9users.io:8081");
+            uri = new URI("ws://nodejs-json-pruebas--jpatricio.c9users.io:8081");//url del cht server
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
-                mWebSocketClient.send("{\"id\":\"" + nickname + "\"}");
+                mWebSocketClient.send("{\"id\":\"" + nickname + "\"}");//se envia el mensaje
             }
 
             @Override
@@ -184,11 +186,13 @@ public class MainActivity extends AppCompatActivity
                         String dest;
                         Boolean prv;
                         try {
-                            clienteRX = new JSONObject(message);
+                            clienteRX = new JSONObject(message);//creamos un objeto json para recibir id,mensaje,destino y si es privado
                             nick = clienteRX.getString("id");
                             msg = clienteRX.getString("mensaje");
                             dest = clienteRX.getString("destino");
                             prv = clienteRX.getBoolean("Privado");
+
+                            //este if comprueba si el mensaje que esta recibiendo es o no privado
                             if (prv.equals(Boolean.TRUE)) {
                                 if (dest.equals(nickname)) {
                                     textView.setText(textView.getText() + "\n" + nick + "\n" + msg);
@@ -231,12 +235,14 @@ public class MainActivity extends AppCompatActivity
         Boolean bl;
         d = destin.getText().toString();
         m = msg.getText().toString();
+
+        //comprueba si es privado o no
         if (box.isChecked()) {
             bl = Boolean.TRUE;
         } else {
             bl = Boolean.FALSE;
         }
-        json = new JSONObject();
+        json = new JSONObject();//creamos un objetos json el cual contendra id,mensaje,destino y si ses privado
         try {
             json.put("id", nickname);
             json.put("mensaje", m);

@@ -38,11 +38,13 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    //Creamos las variables para despues llamarlas
     JSONObject json, clienteRX;
 
     private WebSocketClient mWebSocketClient;
     public static String nickname;
 
+    //permiso de internet
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
 
     @Override
@@ -112,6 +114,9 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
+
+    //metodo en el cual desde el navigation menu(barra lateral) hacemos que pulsando un boton,nos salga un AlertDialog
+    //pidiendo que insertemos el nick que aparecera en el chat web
     public boolean onNavigationItemSelected(MenuItem item) {
 
         int id = item.getItemId();
@@ -144,7 +149,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+//meotod que se conecta al servidor mediante websockets y donde le pasamos la direccion  de nuestro chat web
     private void connectWebSocket() {
 
         URI uri;
@@ -166,6 +171,8 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
+
+            //metodo que recibe mensajes ,y ademas que si marcamos la opcion de privado solo lo recibe la persona que le indicamos
             public void onMessage(String s) {
                 final String message = s;
                 runOnUiThread(new Runnable() {
@@ -198,6 +205,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
+            //mtodo que cierra el websocket
             public void onClose(int i, String s, boolean b) {
                 Log.i("Websocket", "Closed " + s);
             }
@@ -213,6 +221,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    //metodo para enviar mensajes al chat web desde nuestro dispositivo,si el mensaje no es privado se podra ver en el chat
+    // de lo contrario solo se enviara el mensaje a la persona indicada
     public void sendMessage() {
         EditText msg = (EditText) findViewById(R.id.mensaje);
         EditText destin = (EditText) findViewById(R.id.destino);
@@ -240,6 +250,8 @@ public class MainActivity extends AppCompatActivity
         }
         mWebSocketClient.send(json.toString());
     }
+
+    //Metodo que contiene las instrucciones de uso
     public void instrucciones() {
         AlertDialog.Builder build = new AlertDialog.Builder(this);
         build.setTitle("Conexión");

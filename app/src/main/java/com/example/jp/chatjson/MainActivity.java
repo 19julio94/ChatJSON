@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,12 +36,12 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    JSONObject json,clienteRX;
+    JSONObject json, clienteRX;
 
     private WebSocketClient mWebSocketClient;
     public static String nickname;
 
-    private static final int MY_PERMISSIONS_REQUEST_INTERNET=1;
+    private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,6 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
-                mWebSocketClient.send("{\"id\":\"" + nickname+ "\"}");
+                mWebSocketClient.send("{\"id\":\"" + nickname + "\"}");
             }
 
             @Override
@@ -158,26 +157,25 @@ public class MainActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView textView = (TextView)findViewById(R.id.textmensaje);
+                        TextView textView = (TextView) findViewById(R.id.textmensaje);
                         String nick;
                         String msg;
                         String dest;
                         Boolean prv;
                         try {
                             clienteRX = new JSONObject(message);
-                            nick= clienteRX.getString("id");
+                            nick = clienteRX.getString("id");
                             msg = clienteRX.getString("mensaje");
-                            dest= clienteRX.getString("destino");
-                            prv= clienteRX.getBoolean("Privado");
-                            if(prv.equals(Boolean.TRUE)){
-                                if(dest.equals(nickname)){
-                                    textView.setText(textView.getText() + "\n" + nick+ "\n" + msg);
+                            dest = clienteRX.getString("destino");
+                            prv = clienteRX.getBoolean("Privado");
+                            if (prv.equals(Boolean.TRUE)) {
+                                if (dest.equals(nickname)) {
+                                    textView.setText(textView.getText() + "\n" + nick + "\n" + msg);
                                 }
-                            }else
+                            } else
                                 textView.setText("Mensaje Privado");
 
-                        }
-                        catch(JSONException e){
+                        } catch (JSONException e) {
 
                             textView.setText(textView.getText() + "\n" + message);
                         }
@@ -201,11 +199,31 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     public void sendMessage() {
-        EditText editText = (EditText)findViewById(R.id.message);
-        mWebSocketClient.send(editText.getText().toString());
-        editText.setText("");
+        EditText msg = (EditText) findViewById(R.id.mensaje);
+        EditText destin = (EditText) findViewById(R.id.destino);
+        CheckBox box = (CheckBox) findViewById(R.id.priv);
+        String d, m;
+        Boolean bl;
+        d = destin.getText().toString();
+        m = msg.getText().toString();
+        if (box.isChecked()) {
+            bl = Boolean.TRUE;
+        } else {
+            bl = Boolean.FALSE;
+        }
+        json = new JSONObject();
+        try {
+            json.put("id", nickname);
+            json.put("mensaje", m);
+            json.put("destino", d);
+            json.put("Privado", bl);
+            msg.setText("");
+            destin.setText("");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mWebSocketClient.send(json.toString());
     }
 }

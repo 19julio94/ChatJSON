@@ -8,6 +8,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.jp.chatjson.MainActivity"
     tools:showIn="@layout/app_bar_main"
+
     android:weightSum="1">
 
     <TextView

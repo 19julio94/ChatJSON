@@ -1,5 +1,4 @@
 package com.example.jp.chatjson;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -180,4 +179,3 @@ public class MainActivity extends AppCompatActivity
         editText.setText("");
     }
 }
-

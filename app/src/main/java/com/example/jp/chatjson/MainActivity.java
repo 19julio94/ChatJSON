@@ -1,5 +1,7 @@
 package com.example.jp.chatjson;
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -92,13 +94,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+
+
+    @SuppressWarnings("StatementWithEmptyBody")
+
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+
         if (id == R.id.action_settings) {
             return true;
         }
@@ -109,20 +113,30 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.usuario) {
+            AlertDialog.Builder alert= new AlertDialog.Builder(this);
+            final EditText user=new EditText(this);
+            user.setSingleLine();
+            user.setPadding(50,0,50,0);
+            alert.setTitle("NickName");
+            alert.setMessage("Introducir NickName");
+            alert.setView(user);
+            alert.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+                    nickname=user.getText().toString();
+                    if(nickname!=null){
+                        connectWebSocket();
+                    }
+                }
+            });
+            alert.setNegativeButton("Cancelar",null);
+            alert.create();
+            alert.show();
 
         }
 
@@ -226,4 +240,15 @@ public class MainActivity extends AppCompatActivity
         }
         mWebSocketClient.send(json.toString());
     }
+    public void instrucciones() {
+        AlertDialog.Builder build = new AlertDialog.Builder(this);
+        build.setTitle("Conexión");
+        build.setMessage(intruc);
+        build.setPositiveButton("Aceptar", null);
+        build.create();
+        build.show();
+    }
+    public String intruc = "Escribe un nick para poder iniciar el chat.\n" +
+            "-En el menu laterl puedes instroducir tu nick.\n" +
+            "- Una vez introducido se conectará automaticamente.";
 }

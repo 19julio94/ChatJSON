@@ -38,15 +38,14 @@
         android:id="@+id/destino" />
 
     <CheckBox
-        android:id="@+id/priv"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
+        android:text="Msg Privado"
+        android:id="@+id/priv"
+        android:checked="false"
         android:layout_below="@+id/destino"
         android:layout_marginTop="43dp"
-        android:layout_toLeftOf="@+id/destino"
-        android:checked="false"
-        android:text="Msg Privado"
-        app:buttonTint="@android:drawable/checkbox_off_background" />
+        android:layout_toLeftOf="@+id/destino" />
 
     <TextView
         android:layout_width="272dp"

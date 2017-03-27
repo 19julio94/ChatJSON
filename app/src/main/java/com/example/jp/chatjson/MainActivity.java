@@ -24,6 +24,8 @@ import android.widget.Toast;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,7 +35,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    JSONObject json,clienteRX;
+
     private WebSocketClient mWebSocketClient;
+    public static String nickname;
 
     private static final int MY_PERMISSIONS_REQUEST_INTERNET=1;
 
@@ -131,7 +136,7 @@ public class MainActivity extends AppCompatActivity
 
         URI uri;
         try {
-            uri = new URI("ws://192.168.1.150:81");
+            uri = new URI("ws://nodejs-json-pruebas--jpatricio.c9users.io:8081");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -144,7 +149,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
-                mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+                mWebSocketClient.send("{\"id\":\"" + nickname+ "\"}");
             }
 
             @Override
@@ -153,8 +158,29 @@ public class MainActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView textView = (TextView)findViewById(R.id.messages);
-                        textView.setText(textView.getText() + "\n" + message);
+                        TextView textView = (TextView)findViewById(R.id.textmensaje);
+                        String nick;
+                        String msg;
+                        String dest;
+                        Boolean prv;
+                        try {
+                            clienteRX = new JSONObject(message);
+                            nick= clienteRX.getString("id");
+                            msg = clienteRX.getString("mensaje");
+                            dest= clienteRX.getString("destino");
+                            prv= clienteRX.getBoolean("Privado");
+                            if(prv.equals(Boolean.TRUE)){
+                                if(dest.equals(nickname)){
+                                    textView.setText(textView.getText() + "\n" + nick+ "\n" + msg);
+                                }
+                            }else
+                                textView.setText("Mensaje Privado");
+
+                        }
+                        catch(JSONException e){
+
+                            textView.setText(textView.getText() + "\n" + message);
+                        }
                     }
                 });
             }
@@ -173,6 +199,10 @@ public class MainActivity extends AppCompatActivity
         mWebSocketClient.connect();
 
     }
+
+
+
+
     public void sendMessage() {
         EditText editText = (EditText)findViewById(R.id.message);
         mWebSocketClient.send(editText.getText().toString());
